@@ -131,11 +131,9 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;line-height:1.12;col
 .eyebrow::before,.eyebrow.center::after{
   content:"";width:26px;height:1px;background:var(--line-gold);display:inline-block;
 }
-.sec-head{max-width:680px}
-.sec-head.center{margin-inline:auto;text-align:center}
+.sec-head{max-width:680px;margin-inline:auto;text-align:center}
 .sec-head h2{font-size:clamp(30px,4.4vw,50px);font-weight:500}
-.sec-head p{margin-top:18px;color:var(--ink-soft);font-size:clamp(16px,1.5vw,18.5px);max-width:60ch}
-.sec-head.center p{margin-inline:auto}
+.sec-head p{margin-top:18px;color:var(--ink-soft);font-size:clamp(16px,1.5vw,18.5px);max-width:60ch;margin-inline:auto}
 
 /* ---- Buttons ---- */
 .btn{
@@ -155,6 +153,7 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;line-height:1.12;col
 .btn--light{background:rgba(255,255,255,.1);color:var(--cream-hi);border-color:rgba(255,255,255,.32)}
 .btn--light:hover{background:rgba(255,255,255,.18)}
 .btn--sm{padding:10px 18px;font-size:14px}
+.arw{display:inline-block;vertical-align:middle;flex-shrink:0}
 .btn .arw{transition:transform .25s}
 .btn:hover .arw{transform:translateX(3px)}
 
