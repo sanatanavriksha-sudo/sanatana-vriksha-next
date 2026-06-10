@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { getSupabaseAdmin } from '@/lib/supabaseAdmin';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -57,6 +57,7 @@ export async function POST(request) {
     };
 
     try {
+      const supabaseAdmin = getSupabaseAdmin();
       const { error: dbError } = await supabaseAdmin
         .from('payments')
         .upsert(row, { onConflict: 'stripe_session_id' });
