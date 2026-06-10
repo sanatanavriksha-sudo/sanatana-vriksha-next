@@ -1,5 +1,8 @@
 import Stripe from 'stripe';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export async function POST(request) {
@@ -37,7 +40,13 @@ export async function POST(request) {
 
     return Response.json({ url: session.url });
   } catch (err) {
-    console.error('Stripe checkout error:', err);
+    console.error('[create-checkout-session] Stripe error:', {
+      message:   err.message,
+      type:      err.type,
+      code:      err.code,
+      statusCode: err.statusCode,
+      requestId: err.requestId,
+    });
     return Response.json(
       { error: err.message ?? 'Failed to create checkout session.' },
       { status: 500 }
