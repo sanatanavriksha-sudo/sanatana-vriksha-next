@@ -22,13 +22,15 @@ function Scrim({ children, onClose }) {
 }
 
 export function BookingModal({ initialService, onClose, onToast }) {
-  const STEPS = ["Service", "Format", "Date & Time", "Details", "Confirm"];
+  const STEPS = ["Service", "Format", "Date & Time", "Details"];
   const [step, setStep] = useState(0);
   const [service, setService] = useState(initialService || "");
   const [mode, setMode] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [form, setForm] = useState({ name: "", email: "", phone: "", notes: "" });
+  const [paying, setPaying] = useState(false);
+  const [payError, setPayError] = useState("");
   const today = new Date().toISOString().split("T")[0];
 
   const valid = [
@@ -36,12 +38,38 @@ export function BookingModal({ initialService, onClose, onToast }) {
     !!mode,
     !!date && !!time,
     form.name.trim() && /\S+@\S+/.test(form.email),
-    true,
   ];
   const next = () => { if (valid[step]) setStep((s) => Math.min(s + 1, STEPS.length - 1)); };
   const back = () => setStep((s) => Math.max(s - 1, 0));
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const prettyDate = date ? new Date(date + "T00:00").toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }) : "—";
+
+  async function handleCheckout() {
+    if (!valid[3]) return;
+    setPaying(true);
+    setPayError("");
+    try {
+      const res = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          serviceTitle: service,
+          customerEmail: form.email,
+          amount: 25,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        setPayError(data.error || "Could not start checkout. Please try again.");
+        setPaying(false);
+        return;
+      }
+      window.location.href = data.url;
+    } catch {
+      setPayError("A network error occurred. Please check your connection and try again.");
+      setPaying(false);
+    }
+  }
 
   return (
     <Scrim onClose={onClose}>
@@ -49,22 +77,20 @@ export function BookingModal({ initialService, onClose, onToast }) {
         <div className="modal-hd">
           <div>
             <div className="dev">संकल्प · Book a Service</div>
-            <h3>{step < 4 ? "Reserve Your Sacred Service" : "Booking Confirmed"}</h3>
+            <h3>Reserve Your Sacred Service</h3>
           </div>
           <button className="modal-x" onClick={onClose} aria-label="Close">✕</button>
         </div>
 
-        {step < 4 && (
-          <div className="prog">
-            {STEPS.slice(0, 4).map((lbl, i) => (
-              <div key={lbl} className={`prog-item ${i === step ? "active" : ""} ${i < step ? "done" : ""}`}>
-                <span className="prog-num">{i < step ? "✓" : i + 1}</span>
-                <span className="prog-lbl">{lbl}</span>
-                {i < 3 && <span className="prog-line"></span>}
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="prog">
+          {STEPS.map((lbl, i) => (
+            <div key={lbl} className={`prog-item ${i === step ? "active" : ""} ${i < step ? "done" : ""}`}>
+              <span className="prog-num">{i < step ? "✓" : i + 1}</span>
+              <span className="prog-lbl">{lbl}</span>
+              {i < STEPS.length - 1 && <span className="prog-line"></span>}
+            </div>
+          ))}
+        </div>
 
         <div className="modal-body">
           {step === 0 && (
@@ -117,41 +143,30 @@ export function BookingModal({ initialService, onClose, onToast }) {
               <div className="field"><label>Email *</label><input type="email" value={form.email} onChange={set("email")} placeholder="you@example.com" /></div>
               <div className="field"><label>Phone</label><input value={form.phone} onChange={set("phone")} placeholder="(optional)" /></div>
               <div className="field"><label>Saṅkalpa & special intentions</label><textarea rows="3" value={form.notes} onChange={set("notes")} placeholder="Names, gotra, occasion, or any special requests…"></textarea></div>
-            </div>
-          )}
-
-          {step === 4 && (
-            <div className="confirm">
-              <div className="confirm-seal dev">✓</div>
-              <h3>Sarvaṁ Maṅgalam</h3>
-              <p>Thank you, {form.name.split(" ")[0] || "friend"}. Your booking request has been received. A confirmation and preparation guide are on the way to your email.</p>
-              <div className="confirm-recap">
-                <div className="r"><span>Service</span><b>{service}</b></div>
-                <div className="r"><span>Format</span><b>{mode === "online" ? "Online" : "In-Person"}</b></div>
-                <div className="r"><span>Date & Time</span><b>{prettyDate} · {time}</b></div>
-                <div className="r"><span>Confirmation</span><b>#SV-{Math.floor(1000 + Math.random() * 9000)}</b></div>
-              </div>
+              {payError && (
+                <p style={{ marginTop: "12px", color: "var(--maroon, #8b1a1a)", fontSize: "14px", lineHeight: "1.5" }}>
+                  {payError}
+                </p>
+              )}
             </div>
           )}
         </div>
 
-        {step < 4 ? (
-          <div className="modal-ft">
-            <span className="summary">{service ? <>Booking: <b>{service}</b></> : "Step " + (step + 1) + " of 4"}</span>
-            <div style={{ display: "flex", gap: "10px" }}>
-              {step > 0 && <button className="btn btn--ghost btn--sm" onClick={back}>Back</button>}
-              <button className="btn btn--primary btn--sm" disabled={!valid[step]}
-                style={{ opacity: valid[step] ? 1 : .45 }}
-                onClick={step === 3 ? () => { if (valid[3]) setStep(4); } : next}>
-                {step === 3 ? "Confirm Booking" : "Continue"} {Icon.arrow()}
-              </button>
-            </div>
+        <div className="modal-ft">
+          <span className="summary">{service ? <>Booking: <b>{service}</b></> : "Step " + (step + 1) + " of " + STEPS.length}</span>
+          <div style={{ display: "flex", gap: "10px" }}>
+            {step > 0 && !paying && <button className="btn btn--ghost btn--sm" onClick={back}>Back</button>}
+            <button
+              className="btn btn--primary btn--sm"
+              disabled={!valid[step] || paying}
+              style={{ opacity: valid[step] && !paying ? 1 : .45 }}
+              onClick={step === STEPS.length - 1 ? handleCheckout : next}>
+              {step === STEPS.length - 1
+                ? (paying ? "Redirecting…" : "Continue to Secure Payment")
+                : <>{("Continue")} {Icon.arrow()}</>}
+            </button>
           </div>
-        ) : (
-          <div className="modal-ft" style={{ justifyContent: "center" }}>
-            <button className="btn btn--gold btn--sm" onClick={() => { onClose(); onToast("Booking confirmed — we'll be in touch soon."); }}>Done</button>
-          </div>
-        )}
+        </div>
       </div>
     </Scrim>
   );
