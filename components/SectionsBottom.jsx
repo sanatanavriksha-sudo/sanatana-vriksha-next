@@ -283,7 +283,7 @@ export function Footer({ onJump, onBook }) {
   const cols = [
     { h: "Services", links: [["Homas", "homas"], ["Poojas", "poojas"], ["Samskaras", "samskaras"], ["Specialized", "poojas"]] },
     { h: "Learn & Grow", links: [["Classes", "/classes", "ext"], ["Yoga & Meditation", "/classes", "ext"], ["Counseling", "/grow", "ext"], ["Astrology", "/grow", "ext"]] },
-    { h: "Community", links: [["About Us", "/about", "ext"], ["Membership", "membership"], ["Our Offerings", "/offerings", "ext"], ["Donate", "donate"]] },
+    { h: "Community", links: [["About Us", "/about", "ext"], ["Membership", "/membership", "ext"], ["Our Offerings", "/offerings", "ext"], ["Donate", "donate"]] },
   ];
   return (
     <footer className="footer weave" id="contact">

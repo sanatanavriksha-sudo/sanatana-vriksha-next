@@ -6,14 +6,13 @@ import {
   ExperienceBanner,
   LearnBanner,
   GrowBanner,
-  Membership,
   OfferingsBanner,
   Donation,
   Footer,
 } from '@/components/SectionsBottom';
 import { BookingModal, DonateModal } from '@/components/Modals';
 
-const SCROLL_IDS = ["home", "about", "services", "classes", "membership", "donate", "contact"];
+const SCROLL_IDS = ["home", "about", "services", "classes", "donate", "contact"];
 
 function useScrollSpy(ids: string[]) {
   const [active, setActive] = useState("home");
@@ -75,7 +74,6 @@ export default function HomePage() {
         <ExperienceBanner />
         <LearnBanner />
         <GrowBanner />
-        <Membership onJoin={(tier: string) => showToast(`${tier} membership — coming soon. We'll let you know first.`)} />
         <OfferingsBanner />
         <Donation onDonate={() => setDonate(true)} />
         <Footer onJump={jump} onBook={openBook} />
