@@ -15,7 +15,7 @@ export function Nav({ active, onJump, onBook }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const externalPages = { Classes: "/classes", Grow: "/grow", About: "/about", "Our Offerings": "/offerings", Membership: "/membership" };
+  const externalPages = { Classes: "/classes", Grow: "/grow", About: "/about", "Our Offerings": "/offerings", Membership: "/membership", "Vṛkṣa Vāṇī": "/vriksha-vani" };
   const map = { Home: "home", Services: "services", Donate: "donate", Contact: "contact" };
   const go = (id) => (e) => { e.preventDefault(); setOpen(false); onJump(id); };
   const goExternal = (page) => (e) => { e.preventDefault(); setOpen(false); window.location.href = page; };
