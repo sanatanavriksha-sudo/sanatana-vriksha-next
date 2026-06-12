@@ -53,9 +53,15 @@ export function BookingModal({ initialService, onClose, onToast }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          serviceTitle: service,
-          customerEmail: form.email,
-          amount: 25,
+          serviceTitle:   service,
+          customerName:   form.name,
+          customerEmail:  form.email,
+          customerPhone:  form.phone,
+          mode,
+          date,
+          time,
+          notes:          form.notes,
+          amount:         25,
         }),
       });
       const data = await res.json();
