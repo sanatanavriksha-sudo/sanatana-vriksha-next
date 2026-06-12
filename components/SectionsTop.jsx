@@ -40,7 +40,7 @@ export function Nav({ active, onJump, onBook }) {
             })}
           </nav>
           <div className="nav-cta">
-            <button className="btn btn--primary btn--sm btn--book" onClick={() => onBook(null)}>Book Now</button>
+            <button className="btn btn--primary btn--sm btn--book" onClick={() => onBook(null)}>Request a Ritual</button>
             <button className={`nav-burger ${open ? "open" : ""}`} onClick={() => setOpen((o) => !o)} aria-label="Menu">
               <span></span><span></span><span></span>
             </button>
@@ -54,7 +54,7 @@ export function Nav({ active, onJump, onBook }) {
           }
           return <a key={label} href={`#${map[label]}`} onClick={go(map[label])}>{label}</a>;
         })}
-        <button className="btn btn--primary" onClick={() => { setOpen(false); onBook(null); }}>Book a Service</button>
+        <button className="btn btn--primary" onClick={() => { setOpen(false); onBook(null); }}>Request a Ritual</button>
       </div>
     </>
   );
@@ -76,11 +76,11 @@ export function Hero({ onJump, onBook }) {
           <div className="hero-mantra"><span>Experience</span><b></b><span>Learn</span><b></b><span>Grow</span></div>
         </Reveal>
         <Reveal delay={240}>
-          <p className="hero-sub">Rooted in Dharma, Sanātana Vṛkṣa brings sacred services, spiritual learning, and timeless traditions to families and seekers everywhere.</p>
+          <p className="hero-sub">Your daily companion for Sanātana Dharma — learn, practice, participate in sacred traditions, and bring dharma into everyday life.</p>
         </Reveal>
         <Reveal delay={300}>
           <div className="hero-actions">
-            <button className="btn btn--primary" onClick={() => onBook(null)}>Book a Sacred Service {Icon.arrow()}</button>
+            <button className="btn btn--primary" onClick={() => onBook(null)}>Explore Sacred Rituals {Icon.arrow()}</button>
             <button className="btn btn--ghost" onClick={() => onJump("classes")}>Explore Classes</button>
           </div>
         </Reveal>
